@@ -24,6 +24,7 @@ const render = require("./lib/htmlRenderer");
 
 let internArray = [];
 let engineerArray = [];
+
 //ask manager questions
 inquirer.prompt([
 
@@ -47,38 +48,87 @@ inquirer.prompt([
         name: "office",
         message: "What is the Manager's Office Number?"
     }
-    
-])
-.then((answers) => {
-    
-    getEmployeeType();
-    function anotherEmp() {
-    inquirer.prompt([
 
-        {
-            type: "confirm",
-            name: "anotherEmp",
-            message: "Would you like to add another Employee?"
+]).then((answers) => {
+    getEmployees();
+    //getEmployeesThen();
+});
+
+// async function - This just allows us to use the await keyword.
+// await keyword - This keyword means we wait for the result of a Promise (In other words we wait for the result of the asynchrnous function, in this case inquirer.prompt).
+// return Promise (which is just any asynchronous function. In this case inquirer.prompt).
+async function getEmployees() {
+    let endLoop = false;
+
+    while (!endLoop) {
+        let res = await getEmployeeType();
+
+        if (res.add === "Engineer") {
+            engineerArray.push(await getEngineerInfo());
+        } else if (res.add === "Intern") {
+            internArray.push(await getInternInfo());
+        } else {
+            endLoop = true;
         }
-    ])
     }
-    anotherEmp()
-    .then((answer) => {
+}
 
-        while (answer.anotherEmp === true) {
+function getEmployeesThen() {
+    let endLoop = false;
 
-            getEmployeeType();
-            anotherEmp();
-        }
-    })
+    while (!endLoop) {
+        getEmployeeType().then(function(res) {
+            if (res.add === "Engineer") {
+                getEngineerInfo().then(function(res2) {
+                    engineerArray.push(res2);
+                });
+            } else if (res.add === "Intern") {
+                getInternInfo().then(function(res2) {
+                    internArray.push(res2);
+                });
+            } else {
+                endLoop = true;
+            }
+        });
+    }
+}
+
+//     inquirer.prompt([
+
+//         {
+//             type: "list",
+//             name: "add",
+//             message: "What employee would you like to add?",
+//             choices: ["Engineer", "Intern", "I'm done" ]
+
+//         }
 
 
+//     ])
+//         .then(function (answers) {
+//             //console.log(`Test: ${answers.add}`);
 
-})
-.catch((err) => {
+//             while(answers.add !== "I'm done") {
 
-    console.log(err);
-})
+//                 if (answers.add === "Engineer") {
+//                     engineerArray.push(getEngineerInfo());
+//                 } else if(answers.add === "Intern") {
+//                     internArray.push(getInternInfo());
+//                 }
+//                 else {
+
+//                 }
+//             }
+
+//             console.log("Success!")
+
+//         })
+
+// })
+// .catch((err) => {
+
+//     console.log(err);
+// })
 
 // let moreEmployees == true;
 
@@ -96,14 +146,23 @@ inquirer.prompt([
 
 
 
-
-
 function getEmployeeType() {
+    return inquirer.prompt([
+        {
+            type: "list",
+            name: "add",
+            message: "What employee would you like to add?",
+            choices: ["Engineer", "Intern", "I'm done"]
+        }
+    ]);
+}
+
+function addEmployee() {
     inquirer.prompt([
 
         {
             type: "list",
-            name: "type",
+            name: "add",
             message: "What employee would you like to add?",
             choices: ["Engineer", "Intern"]
 
@@ -112,12 +171,17 @@ function getEmployeeType() {
 
     ])
         .then(function (answers) {
-            console.log(`Test: ${answers.type}`);
-            if (answers.type === "Engineer") {
+            //console.log(`Test: ${answers.add}`);
+
+
+            if (answers.add === "Engineer") {
                 engineerArray.push(getEngineerInfo());
             } else {
                 internArray.push(getInternInfo());
             }
+
+
+
         })
 }
 
@@ -125,7 +189,7 @@ function getEmployeeType() {
 //getEngineerInfo()
 function getEngineerInfo() {
 
-    inquirer.prompt([
+    return inquirer.prompt([
 
         {
             type: "input",
@@ -147,23 +211,23 @@ function getEngineerInfo() {
             name: "github",
             message: "What is the Engineer's GitHub username?"
         }
-        
+
     ])
-    .then((answers) => {
-        console.log(`Test: ${answers.github}`);
+        // .then((answers) => {
+        //     //console.log(`Test: ${answers.github}`);
 
 
-    })
-    .catch((err) => {
+        // })
+        // .catch((err) => {
 
-        console.log(err);
-    })
+        //     console.log(err);
+        // })
 }
 //school
 //getInternInfo()
 function getInternInfo() {
 
-    inquirer.prompt([
+    return inquirer.prompt([
 
         {
             type: "input",
@@ -185,21 +249,21 @@ function getInternInfo() {
             name: "school",
             message: "What school did the Intern attend?"
         }
-        
+
     ])
-    .then((answers) => {
-        console.log(`Test: ${answers.school}`);
+        // .then((answers) => {
+        //     //console.log(`Test: ${answers.school}`);
 
 
-    })
-    .catch((err) => {
+        // })
+        // .catch((err) => {
 
-        console.log(err);
-    })
+        //     console.log(err);
+        // })
 }
 //office number
 //getManagerInfo()
-function getManagerInfo(callback) {
+function getManagerInfo() {
 
     inquirer.prompt([
 
@@ -223,17 +287,17 @@ function getManagerInfo(callback) {
             name: "office",
             message: "What is the Manager's Office Number?"
         }
-        
+
     ])
-    .then((answers) => {
-        console.log(`Test: ${answers.office}`);
-        callback();
+        .then((answers) => {
+            //console.log(`Test: ${answers.office}`);
+            callback();
 
-    })
-    .catch((err) => {
+        })
+        .catch((err) => {
 
-        console.log(err);
-    })
+            console.log(err);
+        })
 }
 
 // After the user has input all employees desired, call the `render` function (required
@@ -255,3 +319,35 @@ function getManagerInfo(callback) {
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+
+
+
+
+// ask if u want another
+        // add another or done 
+
+        // inquirer.prompt([
+
+        //     {
+        //         type: "confirm",
+        //         name: "anotherEmp",
+        //         message: "Would you like to add another Employee?"
+        //     }
+        // ])
+
+
+        //     .then((answer) => {
+
+
+        //         if (answer.anotherEmp === true) {
+
+        //             addEmployee();
+        //         } else 
+
+
+
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     })
