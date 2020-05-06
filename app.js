@@ -13,17 +13,9 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-
-//What type of Employee would you like to add?
-// Engineer - email, id, githubname 
-// Intern - name, email, id, school 
-
-// get engineers
-// get interns 
-
-
-let internArray = [];
-let engineerArray = [];
+let employeeArray =  [];
+//let internArray = [];
+//let engineerArray = [];
 
 //ask manager questions
 inquirer.prompt([
@@ -45,13 +37,18 @@ inquirer.prompt([
     },
     {
         type: "input",
-        name: "office",
-        message: "What is the Manager's Office Number?"
+        name: "officeNumber",
+        message: "What is the Manager's Officce Number?"
     }
 
 ]).then((answers) => {
-    getEmployees();
+    const mgr = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+    employeeArray.push(mgr);
+    //getEmployees();
+    //render(employeeArray);
+    console.log(render(employeeArray));
     //getEmployeesThen();
+    
 });
 
 // async function - This just allows us to use the await keyword.
@@ -62,13 +59,15 @@ async function getEmployees() {
 
     while (!endLoop) {
         let res = await getEmployeeType();
-
+        
         if (res.add === "Engineer") {
-            engineerArray.push(await getEngineerInfo());
+            employeeArray.push(await getEngineerInfo());
         } else if (res.add === "Intern") {
-            internArray.push(await getInternInfo());
+            employeeArray.push(await getInternInfo());
         } else {
             endLoop = true;
+            console.log(employeeArray);
+            render(employeeArray);
         }
     }
 }
@@ -93,57 +92,6 @@ function getEmployeesThen() {
     }
 }
 
-//     inquirer.prompt([
-
-//         {
-//             type: "list",
-//             name: "add",
-//             message: "What employee would you like to add?",
-//             choices: ["Engineer", "Intern", "I'm done" ]
-
-//         }
-
-
-//     ])
-//         .then(function (answers) {
-//             //console.log(`Test: ${answers.add}`);
-
-//             while(answers.add !== "I'm done") {
-
-//                 if (answers.add === "Engineer") {
-//                     engineerArray.push(getEngineerInfo());
-//                 } else if(answers.add === "Intern") {
-//                     internArray.push(getInternInfo());
-//                 }
-//                 else {
-
-//                 }
-//             }
-
-//             console.log("Success!")
-
-//         })
-
-// })
-// .catch((err) => {
-
-//     console.log(err);
-// })
-
-// let moreEmployees == true;
-
-
-// while (moreEmployees == true) {
-//   let employee = getEmployeeType();
-
-//   if (employee === "intern") {
-//     internArray.push(getInternInfo());
-//   } else if (employee === "engineer") {
-//     engineerArray.push(getEngineerInfo());
-//   }
-//   moreEmployees = addMoreEmployees();
-// }
-
 
 
 function getEmployeeType() {
@@ -157,33 +105,6 @@ function getEmployeeType() {
     ]);
 }
 
-function addEmployee() {
-    inquirer.prompt([
-
-        {
-            type: "list",
-            name: "add",
-            message: "What employee would you like to add?",
-            choices: ["Engineer", "Intern"]
-
-        }
-
-
-    ])
-        .then(function (answers) {
-            //console.log(`Test: ${answers.add}`);
-
-
-            if (answers.add === "Engineer") {
-                engineerArray.push(getEngineerInfo());
-            } else {
-                internArray.push(getInternInfo());
-            }
-
-
-
-        })
-}
 
 // github username
 //getEngineerInfo()
@@ -291,7 +212,7 @@ function getManagerInfo() {
     ])
         .then((answers) => {
             //console.log(`Test: ${answers.office}`);
-            callback();
+            
 
         })
         .catch((err) => {
