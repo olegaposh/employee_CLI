@@ -46,7 +46,7 @@ inquirer.prompt([
     employeeArray.push(mgr);
     //getEmployees();
     //render(employeeArray);
-    console.log(render(employeeArray));
+    //console.log(render(employeeArray));
     //getEmployeesThen();
     
 });
