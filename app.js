@@ -44,16 +44,13 @@ inquirer.prompt([
 ]).then((answers) => {
     const mgr = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
     employeeArray.push(mgr);
-    //getEmployees();
+    getEmployees();
     //render(employeeArray);
-    console.log(render(employeeArray));
+    //console.log(render(employeeArray));
     //getEmployeesThen();
     
 });
 
-// async function - This just allows us to use the await keyword.
-// await keyword - This keyword means we wait for the result of a Promise (In other words we wait for the result of the asynchrnous function, in this case inquirer.prompt).
-// return Promise (which is just any asynchronous function. In this case inquirer.prompt).
 async function getEmployees() {
     let endLoop = false;
 
@@ -61,12 +58,16 @@ async function getEmployees() {
         let res = await getEmployeeType();
         
         if (res.add === "Engineer") {
-            employeeArray.push(await getEngineerInfo());
+            let engAnswers = await getEngineerInfo();
+            const eng = new Engineer(engAnswers.name, engAnswers.id, engAnswers.email, engAnswers.github);
+            employeeArray.push(eng);
         } else if (res.add === "Intern") {
-            employeeArray.push(await getInternInfo());
+            let intAnswers = await getInternInfo();
+            const int = new Intern(intAnswers.name, intAnswers.id, intAnswers.email, intAnswers.school);
+            employeeArray.push(int);
         } else {
             endLoop = true;
-            console.log(employeeArray);
+            //console.log(render(employeeArray));
             render(employeeArray);
         }
     }
@@ -134,15 +135,6 @@ function getEngineerInfo() {
         }
 
     ])
-        // .then((answers) => {
-        //     //console.log(`Test: ${answers.github}`);
-
-
-        // })
-        // .catch((err) => {
-
-        //     console.log(err);
-        // })
 }
 //school
 //getInternInfo()
@@ -172,54 +164,8 @@ function getInternInfo() {
         }
 
     ])
-        // .then((answers) => {
-        //     //console.log(`Test: ${answers.school}`);
-
-
-        // })
-        // .catch((err) => {
-
-        //     console.log(err);
-        // })
 }
-//office number
-//getManagerInfo()
-function getManagerInfo() {
 
-    inquirer.prompt([
-
-        {
-            type: "input",
-            name: "name",
-            message: "What is the first name of the Manager?"
-        },
-        {
-            type: "input",
-            name: "id",
-            message: "What is the Employee ID of the Manager?"
-        },
-        {
-            type: "input",
-            name: "email",
-            message: "What is the email of the Manager?"
-        },
-        {
-            type: "input",
-            name: "office",
-            message: "What is the Manager's Office Number?"
-        }
-
-    ])
-        .then((answers) => {
-            //console.log(`Test: ${answers.office}`);
-            
-
-        })
-        .catch((err) => {
-
-            console.log(err);
-        })
-}
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -243,32 +189,3 @@ function getManagerInfo() {
 
 
 
-
-
-// ask if u want another
-        // add another or done 
-
-        // inquirer.prompt([
-
-        //     {
-        //         type: "confirm",
-        //         name: "anotherEmp",
-        //         message: "Would you like to add another Employee?"
-        //     }
-        // ])
-
-
-        //     .then((answer) => {
-
-
-        //         if (answer.anotherEmp === true) {
-
-        //             addEmployee();
-        //         } else 
-
-
-
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //     })
