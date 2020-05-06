@@ -51,9 +51,6 @@ inquirer.prompt([
     
 });
 
-// async function - This just allows us to use the await keyword.
-// await keyword - This keyword means we wait for the result of a Promise (In other words we wait for the result of the asynchrnous function, in this case inquirer.prompt).
-// return Promise (which is just any asynchronous function. In this case inquirer.prompt).
 async function getEmployees() {
     let endLoop = false;
 
